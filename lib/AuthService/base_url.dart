@@ -3,27 +3,34 @@ import 'package:flutter/foundation.dart';
 
 class ApiConfig {
   static String get baseUrl {
-    // const bool isProduction = bool.fromEnvironment('dart.vm.product');
-
-    // if (isProduction) {
-    //   // Use the Production API URL
-    //   return 'https://ener-vision-deployerv3.vercel.app';
-    // } else {
-    //   if (kIsWeb) {
-    //     return 'http://localhost:8080';
-    //   } else if (!kIsWeb && (io.Platform.isAndroid || io.Platform.isIOS)) {
-    //     if (io.Platform.isAndroid) {
-    //     } else if (io.Platform.isIOS) {
-    //     }
-    //   } else {
-    //     return 'http://192.168.1.217:8080';
-    //   }
-      return 'http://192.168.1.217:8080';
-      return 'https://ener-vision-deployerv3.vercel.app';
-    // }
+    return 'https://ener-vision-deployerv3.vercel.app';
   }
 }
 
+
+
+// class ApiConfig {
+//   static String get baseUrl {
+//     // const bool isProduction = bool.fromEnvironment('dart.vm.product');
+//
+//     // if (isProduction) {
+//     //   // Use the Production API URL
+//     //   return 'https://ener-vision-deployerv3.vercel.app';
+//     // } else {
+//     //   if (kIsWeb) {
+//     //     return 'http://localhost:8080';
+//     //   } else if (!kIsWeb && (io.Platform.isAndroid || io.Platform.isIOS)) {
+//     //     if (io.Platform.isAndroid) {
+//     //     } else if (io.Platform.isIOS) {
+//     //     }
+//     //   } else {
+//     //     return 'http://192.168.1.217:8080';
+//     //   }
+//       return 'http://192.168.1.217:8080';
+//       return 'https://ener-vision-deployerv3.vercel.app';
+//     // }
+//   }
+// }
 
 /*
 import 'dart:io' as io;
@@ -53,3 +60,4 @@ class ApiConfig {
     return 'http://localhost:8080';
   }
 }
+*/
