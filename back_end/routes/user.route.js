@@ -154,6 +154,37 @@ const errorHandler = (err, req, res, next) => {
   next();
 };
 
+router.get('/getCommunityGuidelines/:userId', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.userId);
+        if (!user) {
+            return res.status(404).json({
+                message: 'User not found',
+                error: 'Invalid userId or user does not exist'
+            });
+        }
+        res.status(200).json({ accepted: user.communityGuidelinesAccepted });
+    } catch (error) {
+        res.status(500).json({
+            message: 'Server error',
+            error: error.message
+        });
+    }
+});
+
+router.post('/acceptCommunityGuideLines/:userId', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        user.communityGuidelinesAccepted = true;
+        await user.save();
+        res.status(200).json({ message: 'Community guidelines accepted' });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+});
 
 router.post("/signin", async (req, res) => {
   try {
@@ -442,5 +473,3 @@ res.json({message : 'User deleted successfully'});
 });
 
 module.exports = router;
-
-
