@@ -10,6 +10,12 @@ class AppTheme {
     color: AppColors.primaryColor,
     fontFamily: 'Montserrat',
   );
+static const TextStyle subTitleTextStyle = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.bold,
+    color: AppColors.primaryColor,
+    fontFamily: 'Montserrat',
+  );
 
   static ThemeData getAppTheme() {
     return ThemeData(

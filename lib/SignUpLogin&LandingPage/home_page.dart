@@ -205,7 +205,7 @@ Widget optimizeEnergyUsage(BuildContext context) {
   return Container(
     decoration: greyBoxDecoration(),
     padding: const EdgeInsets.all(10),
-    margin: const EdgeInsets.symmetric(vertical: 20),
+    margin: const EdgeInsets.all( 20),
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -213,12 +213,10 @@ Widget optimizeEnergyUsage(BuildContext context) {
           padding: const EdgeInsets.all(8.0),
           child: title('Optimize Energy Usage'),
         ),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.0),
-          child: Text(
-            'Analyze energy consumption for efficiency',
-            style: TextStyle(color: Colors.grey),
-          ),
+        const Text(
+          'Identify and track appliances to reduce energy consumption effectively.',
+          style: TextStyle(color: Colors.grey),
+          textAlign: TextAlign.center,
         ),
         const SizedBox(height: 10),
         ElevatedButton(

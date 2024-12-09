@@ -25,9 +25,17 @@ const storage = multer.diskStorage({
 
 // Configure multer without file type restriction
 const upload = multer({
-  storage: storage,
-  limits: {
-    fileSize: 1024 * 1024 * 6, // 6MB limit
+  storage,
+  limits: { fileSize: 1024 * 1024 * 6 }, // 6MB limit
+  fileFilter: (req, file, cb) => {
+    const fileTypes = /jpeg|jpg|png|gif/;
+    const extName = fileTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimeType = fileTypes.test(file.mimetype);
+    if (extName && mimeType) {
+      return cb(null, true);
+    } else {
+      cb(new Error('Only images are allowed!'));
+    }
   },
 });
 
@@ -74,26 +82,60 @@ router.post('/updateUserProfile', upload.single('avatar'), asyncHandler(async (r
     res.status(500).json({ message: 'Failed to update or create user profile', error: error.message });
   }
 }));
+
+
 // Route to get user profile
-router.get('/getUserProfile', async (req, res) => {
-  const { username } = req.query; // Get username from query parameters
+router.post('/updateUserProfile', upload.single('avatar'), asyncHandler(async (req, res) => {
+  const { userId, name, birthDate, energyInterest, mobileNumber, address } = req.body;
 
   try {
-    // Find the user profile by username
-    const userProfile = await UserProfile.findOne({ username });
+    // Validate required fields
+    if (!userId || !name || !birthDate || !address) {
+      return res.status(400).json({ message: 'Missing required fields!' });
+    }
+
+    const addressObj = typeof address === 'string' ? JSON.parse(address) : address;
+    if (!addressObj.countryLine || !addressObj.cityLine || !addressObj.streetLine) {
+      return res.status(400).json({ message: 'Incomplete address information!' });
+    }
+
+    let userProfile = await UserProfile.findOne({ userId });
+
+    const avatar = req.file ? path.relative(uploadDir, req.file.path) : null;
 
     if (userProfile) {
-      return res.status(200).json(userProfile);
+      // Update existing profile
+      userProfile.name = name;
+      userProfile.birthDate = birthDate;
+      userProfile.energyInterest = energyInterest;
+      userProfile.mobileNumber = mobileNumber;
+      userProfile.avatar = avatar || userProfile.avatar;
+      userProfile.address = addressObj;
+
+      await userProfile.save();
+      return res.status(200).json({ message: 'User profile updated successfully!', userProfile });
     } else {
-      return res.status(404).json({ message: 'User profile not found' });
+      // Create new profile
+      userProfile = new UserProfile({
+        userId,
+        name,
+        birthDate,
+        energyInterest,
+        mobileNumber,
+        avatar,
+        address: addressObj,
+      });
+
+      await userProfile.save();
+      return res.status(201).json({ message: 'User profile created successfully!', userProfile });
     }
   } catch (error) {
-    return res.status(500).json({ message: 'Failed to fetch user profile', error: error.message });
+    res.status(500).json({ message: 'Failed to update or create user profile', error: error.message });
   }
-});
+}));
 
 // Route to get user avatar
-router.get('/getUserAvatar', async (req, res) => {
+router.get('/getUserAvatarLatest', async (req, res) => {
   const { username } = req.query; // Get username from query parameters
 
   if (!username) {

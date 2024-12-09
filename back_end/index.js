@@ -58,6 +58,9 @@ app.use('/', require('./routes/compared_appliance.route'));
 app.use('/', require('./routes/monthly_consumption.route'));
 app.use('/', require('./routes/device_info.route'));
 
+app.use('/', require('./routes/goals.route'));
+// app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static('uploads'));
 
 // Cron job to save monthly consumption on the last day of each month
 cron.schedule('0 0 1 * *', async () => {

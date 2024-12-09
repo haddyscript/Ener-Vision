@@ -21,7 +21,6 @@ const upload = multer({
   storage: storage,
   limits: { fileSize: 1024 * 1024 * 5 }, // Limit file size to 5MB
 });
-
 // Update user profile route
 router.post('/updateUserProfile', upload.single('avatar'),authenticateToken, asyncHandler(async (req, res) => {
   const { userId, name, birthDate, energyInterest, mobileNumber, address } = req.body;
@@ -62,7 +61,7 @@ router.post('/updateUserProfile', upload.single('avatar'),authenticateToken, asy
     res.status(500).json({ message: 'Failed to update or create user profile', error: error.message });
   }
 }));
-router.get('/getAvatar', asyncHandler(async (req, res) => {
+router.get('/getAvatarNew', asyncHandler(async (req, res) => {
   const { userId } = req.query;
 
   if (!userId) {

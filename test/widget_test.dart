@@ -1,29 +1,37 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:supabase_project/SignUpLogin&LandingPage/sign_up_page.dart';
 import 'package:supabase_project/main.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(MyApp());
+  testWidgets('Render Sign Up Page UI', (WidgetTester tester) async {
+    // Render the Sign Up Page
+    await tester.pumpWidget(
+      MaterialApp(
+        home: SignUpPage(),
+      ),
+    );
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // Add a delay to allow visual inspection in test environments
+    await tester.pumpAndSettle();
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    // Check if key UI elements are present
+    expect(find.text('Login'), findsOneWidget);
+    expect(find.text('Become a member!'), findsOneWidget);
+    expect(find.text('Enter your credentials to continue'), findsOneWidget);
+    expect(find.text('Username'), findsOneWidget);
+    expect(find.text('Email'), findsOneWidget);
+    expect(find.text('Password'), findsOneWidget);
+    expect(find.text('Register'), findsOneWidget);
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    expect(find.byIcon(Icons.person_outlined), findsOneWidget);
+    expect(find.byIcon(Icons.lock_outline), findsOneWidget);
+    expect(find.byIcon(Icons.email_outlined), findsOneWidget);
+
+    // Debug: Print widget tree to console
+    debugPrint(tester.element(find.byType(SignUpPage)).toStringDeep());
   });
 }

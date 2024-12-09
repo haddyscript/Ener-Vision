@@ -39,7 +39,7 @@ AppBar customAppBar1({
                 backgroundImage:
                     (profileImage != null && profileImage.isNotEmpty)
                         ? NetworkImage(profileImage!)
-                        : const AssetImage('assets/profile (2).png')
+                        : const AssetImage('assets/profile2.jpg')
                             as ImageProvider, // Default image
               ),
             ),

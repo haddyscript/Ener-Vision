@@ -97,7 +97,9 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: AppTheme.getAppTheme(),
+
       home: Scaffold(
         // appBar: AppBar(title: const Text('Login')),
         body: Stack(
@@ -219,7 +221,7 @@ class _LoginPageState extends State<LoginPage> {
                         onPressed: () async {
                           _onButtonPressed();
                         },
-                        text: 'Sign In',
+                        text: 'Login',
                       ),
                       TextButton(
                         onPressed: () {

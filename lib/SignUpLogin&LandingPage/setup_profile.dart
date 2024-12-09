@@ -68,57 +68,70 @@ class _SetupProfileState extends State<SetupProfile> {
 
   // Function to submit the form
   Future<void> _submitForm(BuildContext context) async {
-    final prefs = await SharedPreferences.getInstance();
-    final userId = prefs.getString('userId');
-
-    if (userId == null) {
-      print('User ID is not available.');
+    if (!_formKey.currentState!.validate()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please complete all required fields')),
+      );
       return;
     }
+
+    String? userId = await UserService.getUserId();
+    if (userId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('User ID is not available')),
+      );
+      return;
+    }
+
     String? token = await getToken();
+    if (token == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Token is not available')),
+      );
+      return;
+    }
 
-    final url = Uri.parse("http://10.0.2.2:8080/updateUserProfile");
-    if (token != null) {
-      try {
-        String fullName = toTitleCase(_nameController.text.trim());
-        String? token = await getToken();
-        if (token != null) {
-          var response = await http.post(
-            url,
-            headers: <String, String>{
-              'Content-Type': 'application/json; charset=UTF-8',
-              'Authorization': 'Bearer $token',
-            },
-            body: jsonEncode(<String, dynamic>{
-              'userId': userId,
-              'name': fullName,
-              'birthDate': _birthDateController.text,
-              'mobileNumber': _mobileNumberController.text,
-              'address': {
-                'countryLine': _selectedCountry,
-                'cityLine': _cityLineController.text,
-                'streetLine': _streetLineController.text,
-              },
-            }),
-          );
+    final url = Uri.parse("${ApiConfig.baseUrl}/updateUserProfile");
+    var request = http.MultipartRequest('POST', url);
 
-          if (response.statusCode == 200 || response.statusCode == 201) {
-            var profileData = jsonDecode(response.body);
-            print('Profile updated successfully: ${profileData['message']}');
-            await prefs.setString('name', _nameController.text);
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => SplashScreen()),
-            );
-          } else {
-            print('Failed to update profile: ${response.body}');
-          }
-        }
-      } catch (e) {
-        print('Error occurred while updating profile: $e');
+    request.headers['Authorization'] = 'Bearer $token';
+    request.fields['userId'] = userId;
+    request.fields['name'] = toTitleCase(_nameController.text.trim());
+    request.fields['birthDate'] = _birthDateController.text.trim();
+    request.fields['mobileNumber'] = _mobileNumberController.text.trim();
+    request.fields['address[countryLine]'] = _selectedCountry!;
+    request.fields['address[cityLine]'] = _cityLineController.text.trim();
+    request.fields['address[streetLine]'] = _streetLineController.text.trim();
+
+    if (_profilePicture != null) {
+      request.files.add(
+        await http.MultipartFile.fromPath('avatar', _profilePicture!.path),
+      );
+    }
+
+    try {
+      var response = await request.send();
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        var responseBody = await response.stream.bytesToString();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Profile updated successfully!')),
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => SplashScreen()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to update profile: ${response.reasonPhrase}')),
+        );
       }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error occurred: $e')),
+      );
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -393,52 +406,28 @@ Widget profileImage() {
                         borderRadius:
                             BorderRadius.circular(10), // Rounded corners
                       ),
-                      child: DropdownButtonFormField<String>(
-                        isExpanded: true,
-                        value: _cityLineController.text.isEmpty
-                            ? null
-                            : _cityLineController.text,
+                      child:DropdownButtonFormField<String>(
+                        value: _cityLineController.text.isNotEmpty ? _cityLineController.text : null,
                         onChanged: (newValue) {
                           setState(() {
                             _cityLineController.text = newValue!;
                           });
                         },
+                        validator: (value) => value == null || value.isEmpty ? 'Please select your City' : null,
                         decoration: const InputDecoration(
                           border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 16),
+                          contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
                         ),
-                        items:
-                            city.map<DropdownMenuItem<String>>((String value) {
+                        items: city.map((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
-                            child: Text(
-                              value,
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontSize: 14.0,
-                              ),
-                            ),
+                            child: Text(value),
                           );
                         }).toList(),
-                        validator: (value) {
-                          return value == null || value.isEmpty
-                              ? 'Please select your City'
-                              : null;
-                        },
-                        hint: Text(
-                          _cityLineController.text.isEmpty
-                              ? 'Select City'
-                              : _cityLineController.text,
-                          style: const TextStyle(
-                            color: Color(0xFF969696),
-                            fontSize: 14.0,
-                          ),
-                        ),
                       ),
                     ),
 
-                    const SizedBox(height: 16),
+                      const SizedBox(height: 16),
 
 
                     barangay(),

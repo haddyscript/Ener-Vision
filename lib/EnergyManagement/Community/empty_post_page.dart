@@ -52,16 +52,53 @@ class Body extends StatelessWidget {
               child: const Text(
                 'Add Post',
                 style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
                   fontFamily: 'Montserrat',
                   fontWeight: FontWeight.w600,
                   fontSize: 14.0,
                   color: Colors.white,
                 ),
               ),
-            ),
-          ],
-        ),
-      ],
+              const SizedBox(height: 10),
+               Padding(
+                padding: EdgeInsets.symmetric(horizontal: 50.0),
+                child: Text(
+                  'Add a post or insight to share with the Community.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.grey[700]),
+                ),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const CreatePostPage()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF00C29A),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 100.0, vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                ),
+                child: const Text(
+                  'Add Post',
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14.0,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
