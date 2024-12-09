@@ -28,6 +28,7 @@ const userSchema = new Schema({
     enum: ['user', 'admin', 'reporter'],
     default: 'user',
   },
+  communityGuidelinesAccepted: { type: Boolean, default: false },
   appliances: [{ type: Schema.Types.ObjectId, ref: 'Appliance' }],
   posts: [{ type: Schema.Types.ObjectId, ref: 'Post' }],
   energyDiary: [{ type: Schema.Types.ObjectId, ref: 'EnergyDiary' }],
