@@ -26,11 +26,16 @@ router.post('/goals', async (req, res) => {
       userId,
     });
 
+    console.log('Attempting to save new goal:', newGoal);
     await newGoal.save();
     console.log('Goal saved:', newGoal);  
     res.status(201).json(newGoal);  
   } catch (error) {
-    console.error('Error saving goal:', error);
+    console.error('Error occurred while saving goal:', {
+      message: error.message,
+      stack: error.stack,
+      requestBody: req.body,
+    });
     res.status(500).json({ error: 'Failed to add goal', details: error.message });
   }
 });
